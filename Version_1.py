@@ -4,15 +4,32 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as pl
 import datetime as dt
+import requests
 
 #Startpage der Städtetrip Applikation
 
 st.title("Plane deine Städtrip jetzt!")
 
 #Eingabefeld erstellen und anzeigen
-name1= st.text_input("Was ist dein Reiseziel für den nächsten Städtetrip?")
-if name1:
-    st.write(f'Alles klar, in {name1} könntest du folgende Aktivitäten machen')
+place_name= st.text_input("Was ist dein Reiseziel für den nächsten Städtetrip?")
+if place_name and len(place_name) >=3:
+    response = requests.get(  "https://geodb-free-service.wirefreethought.com/v1/geo/cities",
+        params={
+            "namePrefix": place_name,
+            "minPopulation": 100000,
+            "sort": "-population",
+            "limit": 5
+        }
+    )
+    if response.status_code == 200:
+        cities = response.json()["data"]
+        for city in cities:
+            st.write(f"{city['name']} ({city['country']}) - {city['population']} Einwohner")
+    else:
+        st.error("Fehler")
+if place_name:
+    st.write(f'Alles klar, in {place_name} könntest du folgende Aktivitäten machen')
+
 
 #Heute als Standarddatum
 heute = dt.date.today()
