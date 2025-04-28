@@ -1,6 +1,4 @@
-#Importieren aller Libraries
-import datetime
-
+#Alle importierten Libraries
 import streamlit as st
 import pandas as pd
 import numpy as np
